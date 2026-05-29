@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今日外賣自取食乜好 🥡</title>
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --secondary-color: #2ed573;
+            --bg-color: #f1f2f6;
+            --card-color: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #2f3542;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--card-color);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        /* 餐廳標籤樣式 */
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .choice-badge {
+            background: #e4e7eb;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .choice-badge.active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* 按鈕樣式 */
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(255, 71, 87, 0.2);
+        }
+
+        button:hover {
+            background: #ff6b81;
+        }
+
+        /* 抽取結果 */
+        .result-box {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            border: 2px dashed #ced6e0;
+            border-radius: 8px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* 計時器同備忘錄 */
+        .timer-section, .memo-section {
+            margin-top: 20px;
+            border-top: 1px solid #e4e7eb;
+            padding-top: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .timer-display {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--secondary-color);
+            margin: 10px 0;
+        }
+
+        .timer-btn {
+            background: var(--secondary-color);
+            box-shadow: 0 4px 6px rgba(46, 213, 115, 0.2);
+        }
+        .timer-btn:hover { background: #26af5f; }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ced6e0;
+            border-radius: 6px;
+            resize: none;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🥡 今日外賣自取食乜好？</h1>
+        
+        <!-- 選項顯示 -->
+        <div class="choices-grid" id="choicesGrid">
+            <div class="choice-badge">薩莉亞 Saizeriya</div>
+            <div class="choice-badge">譚仔 Tamjai</div>
+            <div class="choice-badge">Sukiya 牛丼</div>
+            <div class="choice-badge">泰國菜 Thai</div>
+            <div class="choice-badge">西餐 Western</div>
+            <div class="choice-badge">自己煮 Cooking</div>
+        </div>
+
+        <button onclick="spinTheWheel()">幫我決定！🎲</button>
+
+        <div class="result-box" id="resultDisplay">
+            （點擊上面按鈕開始抽籤）
+        </div>
+    </div>
+
+    <!-- 附加功能：外賣自取倒數同備忘 -->
+    <div class="container">
+        <div class="timer-section">
+            <h2>⏱️ 下單後自取倒數（15分鐘）</h2>
+            <div class="timer-display" id="timer">15:00</div>
+            <button class="timer-btn" onclick="startTimer()">出發攞外賣！🏃‍♂️</button>
+        </div>
+
+        <div class="memo-section">
+            <h2>📝 外賣備忘 / 叫咩餸？</h2>
+            <textarea id="memo" placeholder="例如：譚仔過橋米線 勿演 炸醬 什小辣... 薩莉亞肉醬多利亞..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        const restaurants = [
+            "薩莉亞 Saizeriya 🍕",
+            "譚仔 Tamjai 🍜",
+            "Sukiya 牛丼 🍛",
+            "泰國菜 Thai 🇹🇭",
+            "西餐 Western 🥩",
+            "自己煮 Cooking 🍳"
+        ];
+
+        const badges = document.querySelectorAll('.choice-badge');
+        let timerInterval;
+
+        function spinTheWheel() {
+            let counter = 0;
+            const duration = 15; // 閃爍次數
+            const speed = 100; // 閃爍速度 (ms)
+
+            // 清除上次結果
+            document.getElementById('resultDisplay').innerText = "揀緊...🤔";
+
+            const interval = setInterval(() => {
+                // 隨機整亮其中一個標籤
+                badges.forEach(b => b.classList.remove('active'));
+                const randomIndex = Math.floor(Math.random() * restaurants.length);
+                badges[randomIndex].classList.add('active');
+
+                counter++;
+                if (counter >= duration) {
+                    clearInterval(interval);
+                    
+                    // 最終決定
+                    const finalIndex = Math.floor(Math.random() * restaurants.length);
+                    badges.forEach(b => b.classList.remove('active'));
+                    badges[finalIndex].classList.add('active');
+                    
+                    document.getElementById('resultDisplay').innerText = `今日食：${restaurants[finalIndex]}`;
+                }
+            }, speed);
+        }
+
+        // 15分鐘倒數計時器
+        function startTimer() {
+            clearInterval(timerInterval);
+            let time = 15 * 60; // 15 分鐘轉秒數
+            const display = document.getElementById('timer');
+
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                display.innerText = `${minutes}:${seconds}`;
+
+                if (--time < 0) {
+                    clearInterval(timerInterval);
+                    display.innerText = "夠鐘攞得！🔔";
+                    alert("外賣應該整好喇，快啲去攞！");
+                }
+            }, 1000);
+        }
+
+        // 自動儲存備忘錄（費事過期冇咗）
+        document.getElementById('memo').value = localStorage.getItem('pickup_memo') || '';
+        document.getElementById('memo').addEventListener('input', (e) => {
+            localStorage.setItem('pickup_memo', e.target.value);
+        });
+    </script>
+</body>
+</html>
