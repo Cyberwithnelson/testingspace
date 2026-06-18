@@ -320,8 +320,6 @@
                 <a href="mailto:nelsonlam@live.hk" class="block text-[#00ff9d] text-xl py-4 border border-[#00ff9d]/50 rounded-3xl active:bg-[#00ff9d]/10">nelsonlam@live.hk</a>
                 <a href="https://www.linkedin.com/in/nelsonlht" target="_blank" class="block text-[#00ff9d] text-xl py-4 border border-[#00ff9d]/50 rounded-3xl active:bg-[#00ff9d]/10">LinkedIn Profile</a>
             </div>
-            
-            <button onclick="downloadResume()" class="mt-10 w-full py-5 bg-[#00ff9d] text-black rounded-3xl font-bold">DOWNLOAD OFFICIAL DOSSIER (PDF)</button>
         </div>
     </footer>
 
@@ -352,16 +350,7 @@
             }
         });
         
-        function downloadResume() {
-            const link = document.createElement('a');
-            link.href = '/home/workdir/attachments/Profile (1).pdf';
-            link.download = 'Nelson_Lam_Resume.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        // Typing effect restart on reload
+        // Typing effect restart
         setTimeout(() => {
             const typing = document.getElementById('typing-text');
             typing.style.animation = 'none';
