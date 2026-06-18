@@ -3,583 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Profile: Nelson Lam | IAM Analyst</title>
+    <title>Nelson Lam | Cyber Sentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap');
+        
         :root {
-            --bg-color: #060913;
-            --panel-bg: rgba(17, 24, 39, 0.85);
-            --accent-color: #00ff66;
-            --accent-glow: rgba(0, 255, 102, 0.4);
-            --text-color: #f3f4f6;
-            --text-dim: #9ca3af;
-            --border-color: #1f2937;
-            --terminal-bg: #030712;
+            --primary: #00ff9d;
+        }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .header-font {
+            font-family: 'Orbitron', sans-serif;
         }
 
-        #matrixCanvas {
-            position: fixed;
+        .scanline {
+            position: relative;
+        }
+        
+        .scanline::after {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            opacity: 0.15;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-            padding-bottom: 60px;
-        }
-
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 9999;
-            background-size: 100% 3px, 6px 100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 157, 0.03) 50%
+            );
+            background-size: 100% 4px;
             pointer-events: none;
+            animation: scan 4s linear infinite;
         }
 
-        header {
-            background-color: var(--panel-bg);
-            border-bottom: 2px solid var(--accent-color);
-            padding: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 0 15px var(--accent-glow);
-            backdrop-filter: blur(8px);
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 400px; }
         }
 
-        .identity-lockup h1 {
-            color: var(--accent-color);
-            font-size: 2rem;
-            letter-spacing: 3px;
-            text-shadow: 0 0 8px var(--accent-glow);
+        .neon-text {
+            text-shadow: 
+                0 0 5px var(--primary),
+                0 0 10px var(--primary),
+                0 0 20px var(--primary);
         }
 
-        .identity-lockup p {
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            margin-top: 5px;
-            text-transform: uppercase;
+        .terminal {
+            background: #111;
+            border: 1px solid #00ff9d;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
         }
 
-        .access-control-panel {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #1f2937;
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-        }
-
-        .access-label {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-        }
-
-        .access-btn {
-            background: #111827;
-            border: 1px solid var(--border-color);
-            color: var(--text-dim);
-            padding: 4px 10px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            transition: all 0.3s;
-        }
-
-        .access-btn.active {
-            background: var(--accent-color);
-            color: var(--bg-color);
-            font-weight: bold;
-            box-shadow: 0 0 8px var(--accent-glow);
-            border-color: var(--accent-color);
-        }
-
-        .container {
-            max-width: 1300px;
-            margin: 30px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1fr 1.8fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 25px;
+        .nav-link {
             position: relative;
-            backdrop-filter: blur(8px);
-            margin-bottom: 30px;
+            transition: all 0.3s ease;
         }
-
-        .panel::before {
-            content: "// COMPLIANCE NODE OK";
+        
+        .nav-link:after {
+            content: '';
             position: absolute;
-            top: -10px;
-            right: 15px;
-            background: var(--bg-color);
-            color: var(--accent-color);
-            font-size: 0.7rem;
-            padding: 0 5px;
-            border: 1px solid var(--border-color);
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #00ff9d;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
         }
 
-        .panel-title {
-            color: var(--accent-color);
-            border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .terminal-box {
-            background-color: var(--terminal-bg);
-            border: 1px solid rgba(0, 255, 102, 0.3);
-            font-family: monospace;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            height: 180px;
-            overflow-y: auto;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-        }
-
-        .terminal-line {
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            line-height: 1.4;
-        }
-
-        .terminal-line.success { color: var(--accent-color); }
-        .terminal-line.prompt::before { content: "[SYS] > "; color: var(--accent-color); }
-
-        .timeline {
+        .section-header {
             position: relative;
-            padding-left: 20px;
-            border-left: 1px solid var(--border-color);
+            display: inline-block;
+        }
+        
+        .section-header:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #00ff9d, transparent);
+            bottom: -8px;
+            left: 0;
         }
 
         .timeline-item {
-            position: relative;
-            margin-bottom: 35px;
-            transition: transform 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
+        
         .timeline-item:hover {
-            transform: translateX(4px);
+            transform: translateX(15px);
+            box-shadow: 0 0 25px rgba(0, 255, 157, 0.2);
         }
 
-        .timeline-item::before {
-            content: "";
-            position: absolute;
-            left: -26px;
-            top: 5px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--bg-color);
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 8px var(--accent-glow);
+        .skill-bar {
+            height: 8px;
+            background: #1a1a1a;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff9d, #00cc7a);
+            transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .time-node {
-            color: var(--accent-color);
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 6px;
+        .lock-icon {
+            animation: pulse-lock 2s infinite;
         }
 
-        .job-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-color);
+        @keyframes pulse-lock {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
         }
 
-        .company-node {
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            margin-bottom: 12px;
-            font-style: italic;
-        }
-
-        .job-bullets {
-            list-style-type: none;
-        }
-
-        .job-bullets li {
-            font-size: 0.88rem;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            line-height: 1.6;
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .job-bullets li::before {
-            content: ">>";
-            position: absolute;
+        .matrix-bg {
+            position: fixed;
+            top: 0;
             left: 0;
-            color: var(--accent-color);
-            font-size: 0.8rem;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.08;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(#00ff9d 1px, transparent 1px),
+                linear-gradient(90deg, #00ff9d 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: matrix-fall 25s linear infinite;
         }
 
-        .skill-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 12px;
-        }
-
-        .skill-card {
-            background: rgba(13, 19, 33, 0.7);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            text-align: center;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            font-size: 0.85rem;
-            user-select: none;
-        }
-
-        .skill-card:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-glow);
-            transform: scale(1.05);
-            color: var(--accent-color);
-        }
-
-        .secure-vault {
-            background: rgba(13, 19, 33, 0.9);
-            border: 1px dashed var(--accent-color);
-            padding: 20px;
-            text-align: center;
-            border-radius: 4px;
-            margin-top: 15px;
-        }
-
-        .vault-btn {
-            background: transparent;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: inherit;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-            box-shadow: 0 0 5px var(--accent-glow);
-        }
-
-        .vault-btn:hover {
-            background: var(--accent-color);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .decrypted-data {
-            font-size: 1rem;
-            color: var(--accent-color);
-            letter-spacing: 1px;
-            display: none;
-            line-height: 1.8;
-            text-shadow: 0 0 5px var(--accent-glow);
-        }
-
-        .cert-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .cert-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(13, 19, 33, 0.6);
-            padding: 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-        }
-
-        .cert-status {
-            color: var(--accent-color);
-            font-weight: bold;
-            font-size: 0.75rem;
-            background: rgba(0, 255, 102, 0.1);
-            padding: 2px 6px;
-            border-radius: 3px;
-            border: 1px solid var(--accent-color);
+        @keyframes matrix-fall {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 500px; }
         }
     </style>
 </head>
-<body>
+<body class="scanline">
+    <!-- Matrix Background -->
+    <div class="matrix-bg"></div>
 
-    <canvas id="matrixCanvas"></canvas>
-
-    <header>
-        <div class="identity-lockup">
-            <h1>LAM HO TAI, NELSON</h1>
-            <p>Role Profile // Identity & Access Management (IAM) Analyst</p>
-        </div>
-        <div class="access-control-panel">
-            <span class="access-label">PRIVILEGE LEVEL:</span>
-            <button class="access-btn active" onclick="setPrivilege('user', this)">User</button>
-            <button class="access-btn" onclick="setPrivilege('admin', this)">Root Admin</button>
-        </div>
-    </header>
-
-    <div class="container">
-        
-        <div class="column-left" style="display: flex; flex-direction: column;">
-            
-            <div class="panel">
-                <div class="panel-title">🛡️ Diagnostics Console</div>
-                <div class="terminal-box" id="terminalLog"></div>
-                
-                <div style="font-size: 0.88rem; line-height: 1.8; color: var(--text-dim);">
-                    <p><strong style="color: var(--text-color);">Current Location :</strong> Hong Kong [HKG-NODE]</p>
-                    <p><strong style="color: var(--text-color);">Notice Period :</strong> 1 Month Standard</p>
-                    <p><strong style="color: var(--text-color);">Security Context :</strong> Tier-1 Environment Architecture</p>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="panel-title">🔑 IAM Framework Stack</div>
-                <div class="skill-grid">
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: CyberArk EPV Vault Services')">CyberArk EPV</div>
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: Active Directory Services Ecosystem')">Active Directory</div>
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: Role-Based Access Control Mapping')">RBAC Engine</div>
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: ServiceNow Ticket Workflow Pipeline')">ServiceNow</div>
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: Microsoft Intune Asset Enforcements')">MS Intune</div>
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: Statutory Alignment Audit: SOX / GDPR')">SOX / GDPR</div>
-                    <div class="skill-card" onclick="triggerTerminal('Selected Framework Module: Workflow Automation Execution Framework')">Python Core</div>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="panel-title">🔐 Communication Gateway</div>
-                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px; text-align: center;">Perform verification sequence to view validated interface channels.</p>
-                <div class="secure-vault">
-                    <button class="vault-btn" id="decryptBtn" onclick="runAsymmetricDecryption()">Verify Access</button>
-                    <div class="decrypted-data" id="contactInfo">
-                        <div>[EMAIL VECTOR] : Nelsonlam@live.hk</div>
-                        <div style="margin-top: 4px;">[LINKEDIN ID]  : linkedin.com/in/nelsonlht</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="panel-title">🎓 Academic Baseline Directives</div>
-                <div style="margin-bottom: 20px;">
-                    <div style="font-size: 0.8rem; color: var(--accent-color); font-weight: bold;">2015 – 2018</div>
-                    <div style="font-size: 0.95rem; font-weight: bold; margin: 2px 0;">The Open University of Hong Kong</div>
-                    <div style="font-size: 0.85rem; color: var(--text-dim);">Bachelor of Computing with Honours in Internet Technology</div>
-                </div>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-[#00ff9d]/30">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-[#00ff9d] rounded-full flex items-center justify-center text-black font-bold text-xl border-2 border-black">NL</div>
                 <div>
-                    <div style="font-size: 0.8rem; color: var(--accent-color); font-weight: bold;">2013 – 2015</div>
-                    <div style="font-size: 0.95rem; font-weight: bold; margin: 2px 0;">Hong Kong Institute of Vocational Education</div>
-                    <div style="font-size: 0.85rem; color: var(--text-dim);">Higher Diploma in Information and Network Security</div>
+                    <span class="header-font text-2xl tracking-widest neon-text">NELSON LAM</span>
                 </div>
             </div>
-
+            
+            <div class="hidden md:flex items-center gap-x-8 text-sm uppercase tracking-widest">
+                <a href="#about" onclick="smoothScrollTo('about')" class="nav-link text-gray-300 hover:text-[#00ff9d]">ACCESS PROFILE</a>
+                <a href="#experience" onclick="smoothScrollTo('experience')" class="nav-link text-gray-300 hover:text-[#00ff9d]">MISSION LOG</a>
+                <a href="#skills" onclick="smoothScrollTo('skills')" class="nav-link text-gray-300 hover:text-[#00ff9d]">DEFENSES</a>
+                <a href="#certifications" onclick="smoothScrollTo('certifications')" class="nav-link text-gray-300 hover:text-[#00ff9d]">CLEARANCE</a>
+                <a href="#contact" onclick="smoothScrollTo('contact')" class="nav-link text-gray-300 hover:text-[#00ff9d]">SECURE CHANNEL</a>
+            </div>
+            
+            <div class="flex items-center gap-x-4">
+                <a href="https://www.linkedin.com/in/nelsonlht" target="_blank" 
+                   class="px-5 py-2.5 bg-transparent border border-[#00ff9d] hover:bg-[#00ff9d]/10 text-[#00ff9d] text-sm font-medium rounded-full flex items-center gap-x-2 transition-all">
+                    <i class="fab fa-linkedin"></i>
+                    <span>LINKEDIN</span>
+                </a>
+                <button onclick="downloadResume()" 
+                        class="px-6 py-2.5 bg-[#00ff9d] hover:bg-[#00cc7a] text-black font-semibold rounded-full text-sm flex items-center gap-x-2 transition-all">
+                    <i class="fas fa-download"></i>
+                    <span>EXTRACT PDF</span>
+                </button>
+            </div>
         </div>
+    </nav>
 
-        <div class="column-right">
-            <div class="panel" style="height: calc(100% - 30px);">
-                <div class="panel-title">🗃️ Deployment Log & Professional History</div>
+    <!-- Hero -->
+    <header class="min-h-screen flex items-center pt-20 relative">
+        <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8">
+                <div class="inline-flex items-center gap-x-2 px-4 py-1.5 bg-black border border-[#00ff9d]/50 rounded-full text-sm">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-[#00ff9d] tracking-widest">ONLINE • IAM OPERATIONS</span>
+                </div>
                 
-                <div class="timeline">
-                    
-                    <div class="timeline-item">
-                        <div class="time-node">MAY 2022 – PRESENT [4-YEAR RECORDED TENURE]</div>
-                        <div class="job-title" id="jpmTitle">Analyst, Identity and Access Management</div>
-                        <div class="company-node">JPMorgan Chase & Co.</div>
-                        <ul class="job-bullets">
-                            <li><strong>User Lifecycle Management:</strong> Formulate and govern end-to-end JML processes, seamlessly managing creation, modification, and deactivation for user IDs, functional IDs, service accounts, and shadow accounts across enterprise directories.</li>
-                            <li><strong>Scope & Access Control:</strong> Act as a core administrator managing secure access controls for 1,500–2,000 employees within a highly restricted regional environment, ensuring 100% compliance with internal security baselines and external regulatory mandates.</li>
-                            <li><strong>Privileged Access Management (PAM):</strong> Serve as a Subject Matter Expert (SME) for CyberArk Enterprise Password Vault (EPV); mitigate systemic security threats by enforcing automated and manual password rotation policies and conducting rigorous monitoring for anomalous access activities.</li>
-                            <li><strong>Risk Mitigation:</strong> Engineered targeted application access restrictions that decreased unauthorized access risk vectors by 25% through proactive vulnerability mapping and permission pruning.</li>
-                            <li><strong>Incident & Change Governance:</strong> Act as first responder for high-priority IAM incidents and change requests via ServiceNow; coordinate effectively with global engineering units to isolate technical faults, consistently exceeding target SLAs and minimizing platform downtime.</li>
-                            <li><strong>Process Optimization & Training:</strong> Standardized and authored comprehensive, scalable SOPs utilized by global operations; directly mentored and trained 10+ international team members to build operational redundancy and boost cross-functional alignment.</li>
-                        </ul>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="time-node">FEB 2019 – MAY 2022 (3 YEARS 2 MONTHS)</div>
-                        <div class="job-title">TechHub Analyst |Investment & Trading Desktop Support</div>
-                        <div class="company-node">Fidelity International</div>
-                        <ul class="job-bullets">
-                            <li><strong>Operations Support:</strong> Provided mission-critical, Tier-2 technical support for high-frequency trading and investment operations platforms, consistently maintaining a 98% SLA compliance rating.</li>
-                            <li><strong>Directory & Endpoint Administration:</strong> Administered Active Directory accounts, managed structural group policies, and built endpoint security baselines utilizing Microsoft Intune profile configurations for 200+ users.</li>
-                            <li><strong>Incident Management & Continuity:</strong> Handled end-to-end ticketing pipelines, managing over 200 diverse user incidents monthly with high resolution velocity; coordinated high-priority disaster recovery (DR) testing cycles to safeguard operational continuity.</li>
-                            <li><strong>Knowledge Transfer:</strong> Spearheaded technical training modules for 50+ corporate employees on M365 application optimization (Exchange, Teams) and modern security hygiene protocols.</li>
-                        </ul>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="time-node">AUG 2018 – FEB 2019 (7 MONTHS)</div>
-                        <div class="job-title">TechHub Analyst</div>
-                        <div class="company-node">Fidelity International (Contract via Microware Ltd.)</div>
-                        <ul class="job-bullets">
-                            <li><strong>Rapid Incident Resolution:</strong> Successfully diagnosed and resolved 50+ complex technical incidents monthly (including network connectivity failures and Active Directory authentication locks) within a strict 30-minute window, attaining a 90% customer satisfaction score.</li>
-                            <li><strong>Root Cause Analysis:</strong> Documented recurring incident patterns and structural anomalies to optimize first-call resolution rates by 15% and lower repeat support tickets by 20%.</li>
-                            <li><strong>Endpoint Support:</strong> Deployed secure Intune profiles and delivered dedicated macOS enterprise support to optimize endpoint security and device compliance.</li>
-                        </ul>
-                    </div>
-
+                <h1 class="header-font text-7xl md:text-8xl leading-none font-bold tracking-tighter neon-text">
+                    NELSON<br>LAM
+                </h1>
+                
+                <div class="flex items-center gap-x-4">
+                    <div class="h-px w-16 bg-[#00ff9d]"></div>
+                    <p class="text-2xl text-gray-400">CompTIA Security+ • Cyber Guardian</p>
                 </div>
-
-                <div class="panel-title" style="margin-top: 40px;">🛡️ Security Validations Matrix</div>
-                <div class="cert-list">
-                    <div class="cert-item">
-                        <span>CompTIA Security+ Architecture Framework</span>
-                        <span class="cert-status">ACTIVE // ISSUED MAR 2025</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const alphaSequence = "0101010101010101AUTHENTICATEDIAMSECUREMATRIX0123456789%&*";
-        const fontGridSize = 14;
-        const columns = canvas.width / fontGridSize;
-
-        const rainDrops = [];
-        for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
-        }
-
-        function renderMatrixStreams() {
-            ctx.fillStyle = 'rgba(6, 9, 19, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00ff66';
-            ctx.font = fontGridSize + 'px monospace';
-
-            for (let i = 0; i < rainDrops.length; i++) {
-                const textChar = alphaSequence.charAt(Math.floor(Math.random() * alphaSequence.length));
-                ctx.fillText(textChar, i * fontGridSize, rainDrops[i] * fontGridSize);
-
-                if (rainDrops[i] * fontGridSize > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
-            }
-        }
-
-        setInterval(renderMatrixStreams, 30);
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        const bootSequences = [
-            "SYSTEM INITIALIZATION: COMPLETED",
-            "VERIFYING LOCAL SECURITY DOMAINS...",
-            "CREDENTIAL CHECK: COMPTIA SECURITY+ ACTIVE ENFORCEMENT",
-            "INITIALIZING ACCESS CONTROLS TO PRODUCTION INSTANCES...",
-            "OPERATIONAL MONITORING ONLINE: DATA INTEGRITY ASSURED."
-        ];
-
-        const terminalNode = document.getElementById("terminalLog");
-
-        function executeBootDiagnostics(index = 0) {
-            if (index < bootSequences.length) {
-                const logLine = document.createElement("div");
-                logLine.className = "terminal-line " + (index === bootSequences.length - 1 ? "success" : "prompt");
-                logLine.textContent = bootSequences[index];
-                terminalNode.appendChild(logLine);
-                terminalNode.scrollTop = terminalNode.scrollHeight;
-                setTimeout(() => executeBootDiagnostics(index + 1), 350);
-            }
-        }
-
-        function triggerTerminal(eventFeedback) {
-            const logLine = document.createElement("div");
-            logLine.className = "terminal-line prompt success";
-            logLine.textContent = `[EVENT]: ${eventFeedback}`;
-            terminalNode.appendChild(logLine);
-            
-            if (terminalNode.childNodes.length > 10) {
-                terminalNode.removeChild(terminalNode.firstChild);
-            }
-            terminalNode.scrollTop = terminalNode.scrollHeight;
-        }
-
-        function setPrivilege(roleState, element) {
-            document.querySelectorAll('.access-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            
-            const jpmTitle = document.getElementById('jpmTitle');
-            if (roleState === 'admin') {
-                jpmTitle.textContent = "IAM Operation | EPV, Wintel and Application Operation";
-                triggerTerminal("PRIVILEGE CONTEXT MODIFIED: ROLE ELEVATED TO OPERATIONAL METRIC VIEW.");
-            } else {
-                jpmTitle.textContent = "Analyst, Identity and Access Management";
-                triggerTerminal("PRIVILEGE REVERSION: ROLE CONTEXT RESET TO STANDARD ASSIGNMENT.");
-            }
-        }
-
-        function runAsymmetricDecryption() {
-            const decryptBtn = document.getElementById("decryptBtn");
-            const fieldsNode = document.getElementById("contactInfo");
-            let rotationTicks = 0;
-            
-            decryptBtn.disabled = true;
-            
-            const encryptionTimer = setInterval(() => {
-                decryptBtn.textContent = `VERIFYING: ${Math.random().toString(16).substring(2, 8).toUpperCase()}`;
-                rotationTicks++;
-                if (rotationTicks > 6) {
-                    clearInterval(encryptionTimer);
-                    decryptBtn.style.display = "none";
-                    fieldsNode.style.display = "block";
-                    triggerTerminal("IDENTITY VERIFICATION COMPLETED. DATA REVEALED.");
-                }
-            }, 120);
-        }
-
-        window.onload = () => executeBootDiagnostics();
-    </script>
-</body>
-</html>
+                
+                <p class="max-w-md text-lg text-gray-300 leading-relaxed">
+                    6+ years securing digital identities in Tier-1 financial institutions.
